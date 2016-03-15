@@ -1,5 +1,5 @@
 # CROSS COMPILING SETUP
-CROSS_COMPILER=/remotehome/palacioa/Documentos/DSSE/arm-2009q1/bin/
+CROSS_COMPILER =/home/aida/Documents/Master/DSSE/arm-2009q1/bin/
 CC        = $(CROSS_COMPILER)arm-none-linux-gnueabi-gcc
 LD        = $(CROSS_COMPILER)arm-none-linux-gnueabi-ld
 

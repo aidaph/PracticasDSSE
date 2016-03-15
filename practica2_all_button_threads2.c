@@ -48,10 +48,15 @@ int main () {
     int index, data, i, boton_pulsado;
     char *mode;
 
+    // Init the LCD Display
+    ev3_init_lcd();
+
+
     // init attr
     pthread_attr_init(&attr);
-    pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
 
+
+   // THREAD JOINABLE?? -->> NO SE PONE NADA??
 
     // Loading all sensors
     sensors = ev3_load_sensors();
@@ -76,6 +81,11 @@ int main () {
     pthread_create(&th1, &attr, boton, 0);
     pthread_create(&th2, &attr, led, &color_sensor);
     
+    pthread_join(th1, NULL);
+    pthread_join(th2, NULL);
+
+    printf ("Ambos threads han finalizado \n");
+
     //  Finish & close devices
     printf ("\n*** Finishing color sensor application... OK***\n");
     ev3_delete_sensors (sensors);
@@ -84,6 +94,7 @@ int main () {
     printf("thread main terminando \n");
     exit (0);
 
+   ev3_clear_lcd();
 
 }
 void *boton(void *arg){
@@ -92,10 +103,13 @@ void *boton(void *arg){
 
     int index, data, i, boton_pulsado;
     char *mode;         
+
+
     while( index < 150) {
 	for (i=BUTTON_LEFT; i<=BUTTON_BACK; i++){
                 if (ev3_button_pressed(i)){
 			boton_pulsado = i;
+                        ev3_text_lcd_large(8, 20, "botón"+i+" pulsado")
 			break;	
 		}
 		
@@ -108,6 +122,8 @@ void *boton(void *arg){
 
     }
     ev3_quit_button();
+
+
 
 }
 
@@ -126,6 +142,7 @@ void *led(void *arg){
         if (data == 3 || data ==5 || data ==4){
                 if (data ==3){
                         printf("Mode %s, Value = %d, COLOR= verde\n", mode, data);
+			ev3_text_lcd_large()
                         ev3_set_led(LEFT_LED,GREEN_LED, 255);
                 }
                 else if(data==4){
@@ -145,3 +162,15 @@ void *led(void *arg){
       }
       ev3_quit_led();
 }
+
+void *print_lcd(void *arg){
+      int index, data, i;
+      char *mode;
+   
+      ev3_init_lcd();
+
+
+      ev3_clear_lcd();
+
+}
+
