@@ -7,10 +7,10 @@ CFLAGS  =  -I../include/ #COMPLETE WITH FLAGS FOR COMPILER
 LDFLAGS =  ../lib/ev3c-cross.a -lpthread #COMPLETE WITH FLAGS FOR LINKER
 
 # DEFAULT TESTS TO COMPILE 
-all: bin/practica2_all_button_threads 
+all: bin/practica2_all_button_threads2 
 
 # RULES
-bin/practica2_all_button_threads: practica2_all_button_threads.c
+bin/practica2_all_button_threads2: practica2_all_button_threads2.c
 	mkdir -p $(@D)
 	$(CC) -o $@ $< $(LDFLAGS) $(CFLAGS)
 

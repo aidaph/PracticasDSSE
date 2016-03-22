@@ -20,12 +20,8 @@
  */
 #include <stdio.h>
 #include <ev3c.h>
-//#include <ev3c_sensor.h>
-//#include <ev3c_led.h>
-//#include "ev3c_lcd.h"
-//#include "ev3c_button.h"
-#include <unistd.h>
 #include <pthread.h>
+#include <unistd.h>
 
 #define COLOR_SENSOR_NOT_AVAILABLE 	-1
 #define COLOR_SENSOR_PORT		     1
@@ -50,7 +46,7 @@ int main () {
 
     // init attr
     pthread_attr_init(&attr);
-    pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
+//    pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
 
 
     // Loading all sensors
@@ -76,6 +72,9 @@ int main () {
     pthread_create(&th1, &attr, boton, 0);
     pthread_create(&th2, &attr, led, &color_sensor);
     
+    pthread_join(th1, NULL);
+    pthread_join(th2, NULL); 
+   
     //  Finish & close devices
     printf ("\n*** Finishing color sensor application... OK***\n");
     ev3_delete_sensors (sensors);
@@ -93,6 +92,7 @@ void *boton(void *arg){
     int index, data, i, boton_pulsado;
     char *mode;         
     while( index < 150) {
+        boton_pulsado=-1;
 	for (i=BUTTON_LEFT; i<=BUTTON_BACK; i++){
                 if (ev3_button_pressed(i)){
 			boton_pulsado = i;
@@ -100,11 +100,10 @@ void *boton(void *arg){
 		}
 		
         }
-	
-        printf("Mode %s, Value = %d\n", mode, data);
-        printf("El ultimo boton pulsado es %d\n", boton_pulsado);
-        
-	usleep(309848);
+	if (boton_pulsado != -1){
+        	printf("El ultimo boton pulsado es %d\n", boton_pulsado);
+        }
+	usleep(300000);
 
     }
     ev3_quit_button();
@@ -120,7 +119,7 @@ void *led(void *arg){
       mode = color_sensor->modes[color_sensor->mode];
 
       ev3_init_led();
-      for (index = 0; index < 30; index++) {
+      for (index = 0; index < 150; index++) {
         ev3_update_sensor_val(color_sensor);
         data = color_sensor->val_data[0].s32;
         if (data == 3 || data ==5 || data ==4){
